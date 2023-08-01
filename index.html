@@ -58,9 +58,6 @@ function loadPlayer() {
         video_id = link.split('.be/')[1];
     }
 
-    var startTime = document.getElementById('start').value;
-    var endTime = document.getElementById('end').value;
-
     start = convertTimeToSeconds(startTime);
     end = convertTimeToSeconds(endTime);
 
@@ -68,6 +65,10 @@ function loadPlayer() {
         height: '360',
         width: '640',
         videoId: video_id,
+        playerVars: {
+            'start': start,
+            'end': end
+        },
         events: {
             'onReady': onPlayerReady,
             'onStateChange': onPlayerStateChange
@@ -118,10 +119,13 @@ function loadPlayer() {
 
 document.getElementById('update').onclick = function() {
     player.stopVideo();
-    start = convertTimeToSeconds(document.getElementById('start').value); // Updated this line
-    end = convertTimeToSeconds(document.getElementById('end').value);     // Updated this line
-    player.seekTo(start);
-    player.playVideo();
+    start = convertTimeToSeconds(document.getElementById('start').value);
+    end = convertTimeToSeconds(document.getElementById('end').value);
+    player.loadVideoById({
+        videoId: player.getVideoData().video_id,
+        startSeconds: start,
+        endSeconds: end
+    });
 };
 
 
