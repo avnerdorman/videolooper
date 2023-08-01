@@ -4,77 +4,111 @@
 
 <body>
     <h1>Custom YouTube Looper</h1>
-    <!-- Input fields for user to provide the YouTube link, start time and end time of the video clip they want to loop -->
+    
+    <p>This page allows you to loop a specific section of a YouTube video. Follow these steps:</p>
+    <ol>
+        <li>Copy the URL of the YouTube video you want to loop.</li>
+        <li>Paste the URL into the "YouTube Link" field below.</li>
+        <li>Enter the start time of the loop in the "Start Time" field. The time can be entered in the format of hours:minutes:seconds, minutes:seconds, or just seconds.</li>
+        <li>Enter the end time of the loop in the "End Time" field. The time can also be entered in the format of hours:minutes:seconds, minutes:seconds, or just seconds.</li>
+        <li>Click the "Load Video" button to start playing your loop!</li>
+    </ol>
+
+
     <label for="link">YouTube Link:</label><br>
     <input type="text" id="link"><br>
     <label for="start">Start Time (hh:mm:ss, mm:ss, or ss):</label><br>
     <input type="text" id="start"><br>
     <label for="end">End Time (hh:mm:ss, mm:ss, or ss):</label><br>
     <input type="text" id="end"><br>
-    
-    <!-- Sliders for visual selection of start and end time -->
+
+    <!-- Start time slider -->
     <label for="start-slider">Start Time:</label><br>
+    <!-- This slider will allow users to visually select the start time of the loop -->
+    <!-- It calls updateStartTime() function each time the value changes, passing the current value as an argument -->
+    <!-- The min value is 0, and the max value is 1 as a placeholder; it will be updated with the video duration when the video loads -->
     <input type="range" id="start-slider" min="0" max="1" value="0" oninput="updateStartTime(this.value)">
+    <!-- This span will display the current start time in hh:mm:ss format -->
     <span id="start-time-display">00:00:00</span><br>
+
+    <!-- End time slider -->
     <label for="end-slider">End Time:</label><br>
+    <!-- This slider will allow users to visually select the end time of the loop -->
+    <!-- It calls updateEndTime() function each time the value changes, passing the current value as an argument -->
+    <!-- The min value is 0, and the max value is 1 as a placeholder; it will be updated with the video duration when the video loads -->
     <input type="range" id="end-slider" min="0" max="1" value="1" oninput="updateEndTime(this.value)">
+    <!-- This span will display the current end time in hh:mm:ss format -->
     <span id="end-time-display">00:00:00</span><br>
+
     
-    <!-- Button to load the video and update video according to new time ranges -->
     <button onclick="loadPlayer()">Load Video</button>
     <button id="update">Update Video</button>
 
-    <!-- Div where the YouTube player will be inserted -->
     <div id="player"></div>
 
     <script>
-      var player;  // This will hold the YouTube player object
-      var start;  // The start time of the loop in seconds
-      var end;  // The end time of the loop in seconds
+      var player;
+      var start;
+      var end;
 
-      // This function loads the YouTube video and initiates the player
-      function loadPlayer() {
-        // Extract the video ID from the URL
-        var link = document.getElementById('link').value;
-        var video_id = extractVideoID(link);
-        
-        // Convert the start and end times to seconds
-        var startTime = document.getElementById('start').value;
-        var endTime = document.getElementById('end').value;
-        start = convertTimeToSeconds(startTime);
-        end = convertTimeToSeconds(endTime);
+function loadPlayer() {
+    var link = document.getElementById('link').value;
+    var video_id = "";
+    
+    if (link.includes('youtube.com')) {
+        video_id = link.split('v=')[1];
+        var ampersandPosition = video_id.indexOf('&');
+        if(ampersandPosition != -1) {
+            video_id = video_id.substring(0, ampersandPosition);
+        }
+    } else if (link.includes('youtu.be')) {
+        video_id = link.split('.be/')[1];
+    }
 
-        // Create a new YouTube player
-        player = new YT.Player('player', {
-          height: '360',
-          width: '640',
-          videoId: video_id,
-          events: {
+    var startTime = document.getElementById('start').value;
+    var endTime = document.getElementById('end').value;
+
+    start = convertTimeToSeconds(startTime);
+    end = convertTimeToSeconds(endTime);
+
+    player = new YT.Player('player', {
+        height: '360',
+        width: '640',
+        videoId: video_id,
+        events: {
             'onReady': onPlayerReady,
             'onStateChange': onPlayerStateChange
-          }
-        });
-      }
+        }
+    });
+}
 
-      // This function extracts the video ID from a YouTube link
-      function extractVideoID(link) {
-        // Continue with your existing logic for extracting the video ID
-      }
 
-      // This function converts a time string to seconds
-      function convertTimeToSeconds(time) {
-        // Continue with your existing logic for time conversion
-      }
+    function convertTimeToSeconds(time) {
+        var parts = time.split(':');
+        var seconds = 0;
+        if (parts.length === 3) {
+            // If there are three parts, the time includes hours.
+            seconds += (+parts[0]) * 60 * 60;
+            seconds += (+parts[1]) * 60;
+            seconds += (+parts[2]);
+        } else if (parts.length === 2) {
+            // If there are two parts, the time includes minutes and seconds.
+            seconds += (+parts[0]) * 60;
+            seconds += (+parts[1]);
+        } else {
+            // If there is one part, the time includes only seconds.
+            seconds += (+parts[0]);
+        }
+        return seconds;
+    }
 
-      // This function is called when the player's state changes
+
       function onPlayerStateChange(event) {
-        // If the video is playing, stop the video loop after the end time is reached
         if (event.data == YT.PlayerState.PLAYING) {
           setTimeout(stopVideoLoop, (end - start) * 1000);
         }
       }
 
-      // This function seeks the video to the start time
       function stopVideoLoop() {
         player.seekTo(start);
       }
@@ -85,57 +119,76 @@
       var firstScriptTag = document.getElementsByTagName('script')[0];
       firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-      // This function updates the start and end times when the "Update Video" button is clicked
-      document.getElementById('update').onclick = function() {
-        player.stopVideo();
-        start = parseInt(document.getElementById('start-slider').value);
-        end = parseInt(document.getElementById('end-slider').value);
-        player.seekTo(start);
-        player.playVideo();
-      };
 
-      // These functions update the start and end times when the sliders are adjusted
-      function updateStartTime(value) {
-        // Continue with your existing logic for updating the start time
-      }
+    document.getElementById('update').onclick = function() {
+    player.stopVideo();
+    start = parseInt(document.getElementById('start-slider').value);
+    end = parseInt(document.getElementById('end-slider').value);
+    player.seekTo(start);
+    player.playVideo();
+};
 
-      function updateEndTime(value) {
-        // Continue with your existing logic for updating the end time
-      }
+// This function is called whenever the start time slider value changes
+// It formats the new start time and updates the start time input field and the start time display span
+function updateStartTime(value) {
+    var newStartTime = formatTime(value);
+    document.getElementById('start').value = newStartTime;
+    document.getElementById('start-time-display').textContent = newStartTime;
+}
 
-      // This function formats a number of seconds into a string in hh:mm:ss format
-      function formatTime(seconds) {
-        // Continue with your existing logic for time formatting
-      }
+// This function is called whenever the end time slider value changes
+// It formats the new end time and updates the end time input field and the end time display span
+function updateEndTime(value) {
+    var newEndTime = formatTime(value);
+    document.getElementById('end').value = newEndTime;
+    document.getElementById('end-time-display').textContent = newEndTime;
+}
 
-      // This function is called when the player is ready
-      function onPlayerReady(event) {
+// This function formats a number of seconds into a string in hh:mm:ss format
+function formatTime(seconds) {
+    var date = new Date(null);
+    date.setSeconds(seconds);
+    return date.toISOString().substr(11, 8);
+}
+
+// The remaining part of your JavaScript here
+
+    // This function is called when the player is ready
+    // It seeks to the start time, plays the video, and adjusts the start and end time slider max value and display span to match the video duration
+    function onPlayerReady(event) {
         event.target.seekTo(start);
         event.target.playVideo();
         
-        // Update the max values of the sliders to match the video duration
+        // Get the video duration
         var duration = player.getDuration();
+        
+        // Update the start and end time slider max value to the video duration
         document.getElementById('start-slider').max = duration;
         document.getElementById('end-slider').max = duration;
         
-        // Update the value of the start time slider and the text of the end time display
+        // Update the start time slider value to the start time
         document.getElementById('start-slider').value = start;
+        
+        // Update the end time display span to the video duration
         document.getElementById('end-time-display').textContent = formatTime(duration);
-      }
+    }
+    
+    // Get start time input box and add an event listener
+    var startTimeBox = document.getElementById('start');
+    startTimeBox.addEventListener('input', function() {
+      var timeInSeconds = convertTimeToSeconds(this.value);
+      document.getElementById('start-slider').value = timeInSeconds;
+    });
+    
+    // Get end time input box and add an event listener
+    var endTimeBox = document.getElementById('end');
+    endTimeBox.addEventListener('input', function() {
+      var timeInSeconds = convertTimeToSeconds(this.value);
+      document.getElementById('end-slider').value = timeInSeconds;
+    });
 
-      // Add event listeners to the start and end time input fields to update the sliders when the input values change
-      var startTimeBox = document.getElementById('start');
-      startTimeBox.addEventListener('input', function() {
-        var timeInSeconds = convertTimeToSeconds(this.value);
-        document.getElementById('start-slider').value = timeInSeconds;
-      });
-
-      var endTimeBox = document.getElementById('end');
-      endTimeBox.addEventListener('input', function() {
-        var timeInSeconds = convertTimeToSeconds(this.value);
-        document.getElementById('end-slider').value = timeInSeconds;
-      });
         
     </script>
+
 </body>
 </html>
