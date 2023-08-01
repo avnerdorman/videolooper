@@ -120,13 +120,15 @@ function loadPlayer() {
       firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
 
-        document.getElementById('update').onclick = function() {
+document.getElementById('update').onclick = function() {
     player.stopVideo();
-    startTime = convertTimeToSeconds(document.getElementById('start').value);
-    endTime = convertTimeToSeconds(document.getElementById('end').value);
-    player.seekTo(startTime);
+    // Updating the global start and end variables.
+    start = convertTimeToSeconds(document.getElementById('start').value);
+    end = convertTimeToSeconds(document.getElementById('end').value);
+    player.seekTo(start);
     player.playVideo();
 };
+
 
 // This function is called whenever the start time slider value changes
 // It formats the new start time and updates the start time input field and the start time display span
