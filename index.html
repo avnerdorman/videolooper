@@ -120,11 +120,11 @@ function loadPlayer() {
       firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
 
-    document.getElementById('update').onclick = function() {
+        document.getElementById('update').onclick = function() {
     player.stopVideo();
-    start = parseInt(document.getElementById('start-slider').value);
-    end = parseInt(document.getElementById('end-slider').value);
-    player.seekTo(start);
+    startTime = convertTimeToSeconds(document.getElementById('start').value);
+    endTime = convertTimeToSeconds(document.getElementById('end').value);
+    player.seekTo(startTime);
     player.playVideo();
 };
 
