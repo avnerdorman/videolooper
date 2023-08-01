@@ -172,7 +172,22 @@ function formatTime(seconds) {
         // Update the end time display span to the video duration
         document.getElementById('end-time-display').textContent = formatTime(duration);
     }
+    
+    // Get start time input box and add an event listener
+    var startTimeBox = document.getElementById('start');
+    startTimeBox.addEventListener('input', function() {
+      var timeInSeconds = convertTimeToSeconds(this.value);
+      document.getElementById('start-slider').value = timeInSeconds;
+    });
+    
+    // Get end time input box and add an event listener
+    var endTimeBox = document.getElementById('end');
+    endTimeBox.addEventListener('input', function() {
+      var timeInSeconds = convertTimeToSeconds(this.value);
+      document.getElementById('end-slider').value = timeInSeconds;
+    });
 
+        
     </script>
 
 </body>
