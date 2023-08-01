@@ -16,10 +16,11 @@
 
     <label for="link">YouTube Link:</label><br>
     <input type="text" id="link"><br>
-    <label for="start">Start Time (in seconds):</label><br>
-    <input type="number" id="start" min="0"><br>
-    <label for="end">End Time (in seconds):</label><br>
-    <input type="number" id="end" min="0"><br>
+    <label for="start">Start Time (hh:mm:ss, mm:ss, or ss):</label><br>
+    <input type="text" id="start"><br>
+    <label for="end">End Time (hh:mm:ss, mm:ss, or ss):</label><br>
+    <input type="text" id="end"><br>
+
     <button onclick="loadPlayer()">Load Video</button>
 
     <div id="player"></div>
@@ -29,22 +30,45 @@
       var start;
       var end;
 
-      function loadPlayer() {
+    function loadPlayer() {
         var link = document.getElementById('link').value;
         var video_id = link.split('v=')[1];
-        start = document.getElementById('start').value;
-        end = document.getElementById('end').value;
-
+        var startTime = document.getElementById('start').value;
+        var endTime = document.getElementById('end').value;
+    
+        start = convertTimeToSeconds(startTime);
+        end = convertTimeToSeconds(endTime);
+    
         player = new YT.Player('player', {
-          height: '360',
-          width: '640',
-          videoId: video_id,
-          events: {
-            'onReady': onPlayerReady,
-            'onStateChange': onPlayerStateChange
-          }
+            height: '360',
+            width: '640',
+            videoId: video_id,
+            events: {
+                'onReady': onPlayerReady,
+                'onStateChange': onPlayerStateChange
+            }
         });
-      }
+    }
+
+    function convertTimeToSeconds(time) {
+        var parts = time.split(':');
+        var seconds = 0;
+        if (parts.length === 3) {
+            // If there are three parts, the time includes hours.
+            seconds += (+parts[0]) * 60 * 60;
+            seconds += (+parts[1]) * 60;
+            seconds += (+parts[2]);
+        } else if (parts.length === 2) {
+            // If there are two parts, the time includes minutes and seconds.
+            seconds += (+parts[0]) * 60;
+            seconds += (+parts[1]);
+        } else {
+            // If there is one part, the time includes only seconds.
+            seconds += (+parts[0]);
+        }
+        return seconds;
+    }
+
 
       function onPlayerReady(event) {
         event.target.seekTo(start);
