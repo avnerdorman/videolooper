@@ -133,6 +133,47 @@ function loadPlayer() {
     player.playVideo();
 };
 
+// This function is called whenever the start time slider value changes
+// It formats the new start time and updates the start time input field and the start time display span
+function updateStartTime(value) {
+    var newStartTime = formatTime(value);
+    document.getElementById('start').value = newStartTime;
+    document.getElementById('start-time-display').textContent = newStartTime;
+}
+
+// This function is called whenever the end time slider value changes
+// It formats the new end time and updates the end time input field and the end time display span
+function updateEndTime(value) {
+    var newEndTime = formatTime(value);
+    document.getElementById('end').value = newEndTime;
+    document.getElementById('end-time-display').textContent = newEndTime;
+}
+
+// This function formats a number of seconds into a string in hh:mm:ss format
+function formatTime(seconds) {
+    var date = new Date(null);
+    date.setSeconds(seconds);
+    return date.toISOString().substr(11, 8);
+}
+
+// The remaining part of your JavaScript here
+
+// This function is called when the player is ready
+// It seeks to the start time, plays the video, and adjusts the end time slider max value and display span to match the video duration
+function onPlayerReady(event) {
+    event.target.seekTo(start);
+    event.target.playVideo();
+    
+    // Get the video duration
+    var duration = player.getDuration();
+    
+    // Update the end time slider max value to the video duration
+    document.getElementById('end-slider').max = duration;
+    
+    // Update the end time display span to the video duration
+    document.getElementById('end-time-display').textContent = formatTime(duration);
+}
+
     </script>
 
 </body>
