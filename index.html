@@ -101,13 +101,10 @@ function loadPlayer() {
           setTimeout(stopVideoLoop, (end - start) * 1000);
         }
       }
-    
-    function stopVideoLoop() {
-        if (player.getCurrentTime() >= end) {
-            player.seekTo(start);
-        }
-    }
 
+      function stopVideoLoop() {
+        player.seekTo(start);
+      }
 
       // This code loads the IFrame Player API code asynchronously.
       var tag = document.createElement('script');
@@ -154,14 +151,22 @@ function formatTime(seconds) {
     // This function is called when the player is ready
     // It seeks to the start time, plays the video, and adjusts the start and end time slider max value and display span to match the video duration
     function onPlayerReady(event) {
+        event.target.seekTo(start);
         event.target.playVideo();
+        
+        // Get the video duration
         var duration = player.getDuration();
+        
+        // Update the start and end time slider max value to the video duration
         document.getElementById('start-slider').max = duration;
         document.getElementById('end-slider').max = duration;
+        
+        // Update the start time slider value to the start time
         document.getElementById('start-slider').value = start;
+        
+        // Update the end time display span to the video duration
         document.getElementById('end-time-display').textContent = formatTime(duration);
     }
-
     
     // Get start time input box and add an event listener
     var startTimeBox = document.getElementById('start');
