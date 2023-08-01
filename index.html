@@ -103,10 +103,25 @@ function loadPlayer() {
     }
 
 
-      function onPlayerReady(event) {
+    // This function is called when the player is ready
+    // It seeks to the start time, plays the video, and adjusts the start and end time slider max value and display span to match the video duration
+    function onPlayerReady(event) {
         event.target.seekTo(start);
         event.target.playVideo();
-      }
+        
+        // Get the video duration
+        var duration = player.getDuration();
+        
+        // Update the start and end time slider max value to the video duration
+        document.getElementById('start-slider').max = duration;
+        document.getElementById('end-slider').max = duration;
+        
+        // Update the start time slider value to the start time
+        document.getElementById('start-slider').value = start;
+        
+        // Update the end time display span to the video duration
+        document.getElementById('end-time-display').textContent = formatTime(duration);
+    }
 
       function onPlayerStateChange(event) {
         if (event.data == YT.PlayerState.PLAYING) {
