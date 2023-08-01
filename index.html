@@ -31,41 +31,25 @@
       var start;
       var end;
 
-function loadPlayer() {
-    if (player) {
-        player.destroy();
-    }
+    function loadPlayer() {
+        var link = document.getElementById('link').value;
+        var video_id = link.split('v=')[1];
+        var startTime = document.getElementById('start').value;
+        var endTime = document.getElementById('end').value;
     
-    var link = document.getElementById('link').value;
-    var video_id = "";
+        start = convertTimeToSeconds(startTime);
+        end = convertTimeToSeconds(endTime);
     
-    if (link.includes('youtube.com')) {
-        video_id = link.split('v=')[1];
-        var ampersandPosition = video_id.indexOf('&');
-        if(ampersandPosition != -1) {
-            video_id = video_id.substring(0, ampersandPosition);
-        }
-    } else if (link.includes('youtu.be')) {
-        video_id = link.split('.be/')[1];
+        player = new YT.Player('player', {
+            height: '360',
+            width: '640',
+            videoId: video_id,
+            events: {
+                'onReady': onPlayerReady,
+                'onStateChange': onPlayerStateChange
+            }
+        });
     }
-
-    var startTime = document.getElementById('start').value;
-    var endTime = document.getElementById('end').value;
-
-    start = convertTimeToSeconds(startTime);
-    end = convertTimeToSeconds(endTime);
-
-    player = new YT.Player('player', {
-        height: '360',
-        width: '640',
-        videoId: video_id,
-        events: {
-            'onReady': onPlayerReady,
-            'onStateChange': onPlayerStateChange
-        }
-    });
-}
-
 
     function convertTimeToSeconds(time) {
         var parts = time.split(':');
@@ -87,6 +71,11 @@ function loadPlayer() {
     }
 
 
+      function onPlayerReady(event) {
+        event.target.seekTo(start);
+        event.target.playVideo();
+      }
+
       function onPlayerStateChange(event) {
         if (event.data == YT.PlayerState.PLAYING) {
           setTimeout(stopVideoLoop, (end - start) * 1000);
@@ -102,78 +91,6 @@ function loadPlayer() {
       tag.src = "https://www.youtube.com/iframe_api";
       var firstScriptTag = document.getElementsByTagName('script')[0];
       firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-
-document.getElementById('update').onclick = function() {
-    player.stopVideo();
-    start = convertTimeToSeconds(document.getElementById('start').value); // Updated this line
-    end = convertTimeToSeconds(document.getElementById('end').value);     // Updated this line
-    player.seekTo(start);
-    player.playVideo();
-};
-
-
-
-// This function is called whenever the start time slider value changes
-// It formats the new start time and updates the start time input field and the start time display span
-function updateStartTime(value) {
-    var newStartTime = formatTime(value);
-    document.getElementById('start').value = newStartTime;
-    document.getElementById('start-time-display').textContent = newStartTime;
-}
-
-// This function is called whenever the end time slider value changes
-// It formats the new end time and updates the end time input field and the end time display span
-function updateEndTime(value) {
-    var newEndTime = formatTime(value);
-    document.getElementById('end').value = newEndTime;
-    document.getElementById('end-time-display').textContent = newEndTime;
-}
-
-// This function formats a number of seconds into a string in hh:mm:ss format
-function formatTime(seconds) {
-    var date = new Date(null);
-    date.setSeconds(seconds);
-    return date.toISOString().substr(11, 8);
-}
-
-// The remaining part of your JavaScript here
-
-    // This function is called when the player is ready
-    // It seeks to the start time, plays the video, and adjusts the start and end time slider max value and display span to match the video duration
-    function onPlayerReady(event) {
-        event.target.seekTo(start);
-        event.target.playVideo();
-        
-        // Get the video duration
-        var duration = player.getDuration();
-        
-        // Update the start and end time slider max value to the video duration
-        document.getElementById('start-slider').max = duration;
-        document.getElementById('end-slider').max = duration;
-        
-        // Update the start time slider value to the start time
-        document.getElementById('start-slider').value = start;
-        
-        // Update the end time display span to the video duration
-        document.getElementById('end-time-display').textContent = formatTime(duration);
-    }
-    
-    // Get start time input box and add an event listener
-    var startTimeBox = document.getElementById('start');
-    startTimeBox.addEventListener('input', function() {
-      var timeInSeconds = convertTimeToSeconds(this.value);
-      document.getElementById('start-slider').value = timeInSeconds;
-    });
-    
-    // Get end time input box and add an event listener
-    var endTimeBox = document.getElementById('end');
-    endTimeBox.addEventListener('input', function() {
-      var timeInSeconds = convertTimeToSeconds(this.value);
-      document.getElementById('end-slider').value = timeInSeconds;
-    });
-
-        
     </script>
 
 </body>
