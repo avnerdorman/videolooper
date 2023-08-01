@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <h1>Custom YouTube Looper</h1>
+
+    <label for="link">YouTube Link:</label><br>
+    <input type="text" id="link"><br>
+    <label for="start">Start Time (in seconds):</label><br>
+    <input type="number" id="start" min="0"><br>
+    <label for="end">End Time (in seconds):</label><br>
+    <input type="number" id="end" min="0"><br>
+    <button onclick="loadPlayer()">Load Video</button>
+
+    <div id="player"></div>
+
+    <script>
+      var player;
+      var start;
+      var end;
+
+      function loadPlayer() {
+        var link = document.getElementById('link').value;
+        var video_id = link.split('v=')[1];
+        start = document.getElementById('start').value;
+        end = document.getElementById('end').value;
+
+        player = new YT.Player('player', {
+          height: '360',
+          width: '640',
+          videoId: video_id,
+          events: {
+            'onReady': onPlayerReady,
+            'onStateChange': onPlayerStateChange
+          }
+        });
+      }
+
+      function onPlayerReady(event) {
+        event.target.seekTo(start);
+        event.target.playVideo();
+      }
+
+      function onPlayerStateChange(event) {
+        if (event.data == YT.PlayerState.PLAYING) {
+          setTimeout(stopVideoLoop, (end - start) * 1000);
+        }
+      }
+
+      function stopVideoLoop() {
+        player.seekTo(start);
+      }
+
+      // This code loads the IFrame Player API code asynchronously.
+      var tag = document.createElement('script');
+      tag.src = "https://www.youtube.com/iframe_api";
+      var firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    </script>
+
+</body>
+</html>
