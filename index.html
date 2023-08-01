@@ -23,6 +23,7 @@
     <input type="text" id="end"><br>
 
     <button onclick="loadPlayer()">Load Video</button>
+    <button id="update">Update Video</button>
 
     <div id="player"></div>
 
@@ -91,6 +92,16 @@
       tag.src = "https://www.youtube.com/iframe_api";
       var firstScriptTag = document.getElementsByTagName('script')[0];
       firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+
+        document.getElementById('update').onclick = function() {
+    player.stopVideo();
+    startTime = convertTimeToSeconds(document.getElementById('start').value);
+    endTime = convertTimeToSeconds(document.getElementById('end').value);
+    player.seekTo(startTime);
+    player.playVideo();
+};
+
     </script>
 
 </body>
