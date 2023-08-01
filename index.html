@@ -122,12 +122,12 @@ function loadPlayer() {
 
 document.getElementById('update').onclick = function() {
     player.stopVideo();
-    // Updating the global start and end variables.
-    start = convertTimeToSeconds(document.getElementById('start').value);
-    end = convertTimeToSeconds(document.getElementById('end').value);
+    start = convertTimeToSeconds(document.getElementById('start').value); // Updated this line
+    end = convertTimeToSeconds(document.getElementById('end').value);     // Updated this line
     player.seekTo(start);
     player.playVideo();
 };
+
 
 
 // This function is called whenever the start time slider value changes
