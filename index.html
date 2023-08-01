@@ -22,6 +22,25 @@
     <label for="end">End Time (hh:mm:ss, mm:ss, or ss):</label><br>
     <input type="text" id="end"><br>
 
+    <!-- Start time slider -->
+    <label for="start-slider">Start Time:</label><br>
+    <!-- This slider will allow users to visually select the start time of the loop -->
+    <!-- It calls updateStartTime() function each time the value changes, passing the current value as an argument -->
+    <!-- The min value is 0, and the max value is 1 as a placeholder; it will be updated with the video duration when the video loads -->
+    <input type="range" id="start-slider" min="0" max="1" value="0" oninput="updateStartTime(this.value)">
+    <!-- This span will display the current start time in hh:mm:ss format -->
+    <span id="start-time-display">00:00:00</span><br>
+
+    <!-- End time slider -->
+    <label for="end-slider">End Time:</label><br>
+    <!-- This slider will allow users to visually select the end time of the loop -->
+    <!-- It calls updateEndTime() function each time the value changes, passing the current value as an argument -->
+    <!-- The min value is 0, and the max value is 1 as a placeholder; it will be updated with the video duration when the video loads -->
+    <input type="range" id="end-slider" min="0" max="1" value="1" oninput="updateEndTime(this.value)">
+    <!-- This span will display the current end time in hh:mm:ss format -->
+    <span id="end-time-display">00:00:00</span><br>
+
+    
     <button onclick="loadPlayer()">Load Video</button>
     <button id="update">Update Video</button>
 
