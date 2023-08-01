@@ -32,6 +32,10 @@
       var end;
 
 function loadPlayer() {
+    if (player) {
+        player.destroy();
+    }
+    
     var link = document.getElementById('link').value;
     var video_id = "";
     
